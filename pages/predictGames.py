@@ -9,58 +9,6 @@ from pages.moreGameInfo import show_more_game_info
 
 from constant.params import *
 
-# Lire le fichier Parquet
-file_path_category = './raw_data/category_data.parquet'
-file_path_family = './raw_data/family_data.parquet'
-file_path_mechanic = './raw_data/mechanic_data.parquet'
-
-df_category = pd.read_parquet(file_path_category)
-df_family = pd.read_parquet(file_path_family)
-df_mechanic = pd.read_parquet(file_path_mechanic)
-
-# Afficher les données dans Streamlit
-# st.write("### Données chargées depuis category_data.parquet")
-# st.dataframe(df_category)
-
-# # Afficher les données dans Streamlit
-# st.write("### Données chargées depuis category_data.parquet")
-# st.dataframe(df_family)
-
-# # Afficher les données dans Streamlit
-# st.write("### Données chargées depuis category_data.parquet")
-# st.dataframe(df_mechanic)
-
-df_category['name'] = 'category: ' + df_category['boardgamecategory'].astype(str)
-df_category.drop(columns=['boardgamecategory'], inplace=True)
-df_family['name'] = 'family: ' + df_family['boardgamefamily'].astype(str)
-df_family.drop(columns=['boardgamefamily'], inplace=True)
-df_mechanic['name'] = 'mechanic: ' + df_mechanic['boardgamemechanic'].astype(str)
-df_mechanic.drop(columns=['boardgamemechanic'], inplace=True)
-
-df_all = pd.concat([df_category, df_family, df_mechanic], ignore_index=True)
-# st.write("### Données chargées depuis category_data.parquet")
-# st.dataframe(df_all)
-
-# # Zone de saisie pour la recherche (mise à jour automatique à chaque frappe)
-# search_term = st.text_input("Rechercher :", "")
-
-# # Filtrage en temps réel (insensible à la casse)
-# if search_term:
-#     filtered_df = df_category[
-#         df_category.apply(lambda row: row.astype(str).str.contains(search_term, case=False).any(), axis=1)
-#     ]
-# else:
-#     filtered_df = df_category
-
-# Affichage du nombre de résultats
-# st.write(f"**{len(filtered_df)} résultats trouvés**")
-
-# # Affichage dynamique des résultats
-# if not filtered_df.empty:
-#     # Affiche seulement les premières lignes pour éviter de surcharger l'affichage
-#     st.dataframe(filtered_df.head(50))
-# else:
-#     st.write("⚠️ Aucun résultat trouvé.")
 #-------------------------------------------------------------------------
 #
 #     CONSTANTS
@@ -71,7 +19,7 @@ df_all = pd.concat([df_category, df_family, df_mechanic], ignore_index=True)
 # OPTION_BOARD_GAME_LIBRARY = "What game I must have in my board game library?"
 OPTION_OFFER_TO_NEPHEW = "Game for a friend"
 OPTION_PLAYLIST_FOR_TONIGHT = "Games for tonight"
-OPTION_BOARD_GAME_LIBRARY = "Based on my BGG" #"Find my next game..." # "Game I must have!"
+OPTION_BOARD_GAME_LIBRARY = "Based on my BGG"
 
 ERROR_API_RESPONSE_FORMAT = "The API response is not in the expected format."
 ERROR_INVALID_BGG_USER_ID = "Please enter a valid BGG user ID!"
@@ -83,6 +31,18 @@ BASE_ENDPOINTS_URL = "https://api-326525614739.europe-west1.run.app/"
 #     FUNCTIONS
 #
 #-------------------------------------------------------------------------
+@st.cache_data
+def load_parquet_data():
+    file_path_category = './raw_data/category_data.parquet'
+    file_path_family = './raw_data/family_data.parquet'
+    file_path_mechanic = './raw_data/mechanic_data.parquet'
+
+    df_category = pd.read_parquet(file_path_category)
+    df_family = pd.read_parquet(file_path_family)
+    df_mechanic = pd.read_parquet(file_path_mechanic)
+
+    return df_category, df_family, df_mechanic
+
 def get_user_input():
     user_id = st.text_input("BGG user ID:", key="user_id")
     game_option = st.selectbox(
@@ -99,51 +59,15 @@ def get_game_details():
     age = st.selectbox("Minimum Age:", list(AGE.keys()), key="age")
     yearpublished = st.selectbox("Year Published:", list(YEAR_PUBLISHED.keys()), key="yearpublished")
 
-    # Search in category, family and mechanic dazta
-    boardgamecategory = ""
-    boardgamemechanic = ""
-    boardgamefamily = ""
-    search_term = st.text_input("Search categories:", "")
-    if search_term:
-        filtered_df = df_all[
-            df_all.apply(lambda row: row.astype(str).str.contains(search_term, case=False).any(), axis=1)
-        ]
-        st.write(f"{len(filtered_df)} Found categories")
-    else:
-        filtered_df = df_all
-        st.write(f"{len(filtered_df)} available categories")
+    df_category, df_family, df_mechanic = load_parquet_data() # Done once only!
 
-    if not filtered_df.empty:
-        limited_df = filtered_df.head(20)
+    category_options = [""] + df_category['boardgamecategory'].dropna().unique().tolist()
+    mechanic_options = [""] + df_mechanic['boardgamemechanic'].dropna().unique().tolist()
+    family_options = [""] + df_family['boardgamefamily'].dropna().unique().tolist()
 
-        # selected_entry = st.selectbox("Select category:", limited_df['name'].tolist())
-        selected_entry = st.multiselect("Select category:", limited_df['name'].tolist())
-        # st.dataframe(limited_df)
-
-        if selected_entry:
-            origin, rest = selected_entry.split(":", 1)
-            category = origin.strip()
-            category_name = rest.replace("Game:", "").strip()
-
-            # st.write("category: ", category)
-            # st.write("category name: ", category_name)
-            boardgamecategory = ""
-            boardgamemechanic = ""
-            boardgamefamily = ""
-            if category == "family":
-                boardgamefamily = category_name
-            elif category == "mechanic":
-                boardgamemechanic = category_name
-            else:
-                boardgamecategory = category_name
-
-    else:
-        st.write("No category found")
-
-
-    # boardgamecategory = st.text_input("Board Game Category:", key="boardgamecategory")
-    # boardgamemechanic = st.text_input("Board Game Mechanic:", key="boardgamemechanic")
-    # boardgamefamily = st.text_input("Board Game Family:", key="boardgamefamily")
+    boardgamecategory = st.selectbox("Select category:", category_options, index=0, help="Select a category")
+    boardgamemechanic = st.selectbox("Select mechanic:", mechanic_options, index=0, help="Select a mechanic")
+    boardgamefamily = st.selectbox("Select family:", family_options, index=0, help="Select a family")
 
     return {
         "cluster": cluster,
@@ -193,7 +117,6 @@ def show_predict_games():
             if st.button("🏠", help="Back to Home"):
                 st.session_state.page = "Home"
 
-
     if 'games_list' not in st.session_state:
         st.session_state['games_list'] = []
 
@@ -203,13 +126,6 @@ def show_predict_games():
     with col1: # LEFT PANEL
         choices = [OPTION_BOARD_GAME_LIBRARY, OPTION_OFFER_TO_NEPHEW, OPTION_PLAYLIST_FOR_TONIGHT]
         option = st.segmented_control("", choices, selection_mode="single")
-        # option = st.selectbox(
-        #     "Choose what to do:",
-        #     (OPTION_BOARD_GAME_LIBRARY,
-        #     OPTION_OFFER_TO_NEPHEW,
-        #     OPTION_PLAYLIST_FOR_TONIGHT
-        #     )
-        # )
 
         if option == OPTION_BOARD_GAME_LIBRARY:
             user_id, game_option = get_user_input()
@@ -220,12 +136,11 @@ def show_predict_games():
         else: # "What can I offer to my nephew?"
             game_details = get_game_details()
 
-        col_left, col_right = st.columns([3, 1])  # Adjust the proportions according to your needs
+        col_left, col_right = st.columns([3, 1])
         with col_right:
             if st.button("Find games"):
                 if option == OPTION_BOARD_GAME_LIBRARY:
                     if user_id:
-                        # API call to retrieve games
                         params = {
                             "userID": user_id,
                             "predict_option": game_option
@@ -303,7 +218,7 @@ def show_predict_games():
                         st.markdown(f"**Name:** {game.get('name', 'N/A')}")
                         st.markdown(f"**Age:** {game.get('age', 'Not specified')}")
                         st.markdown(f"**Description:** {game.get('description', 'No description available')[:100]}...")
-                        # Add your URLs here
+
                         bgg_url = f"https://boardgamegeek.com/boardgame/{game.get('@objectid')}"
                         st.markdown(f"[Game Info](#) | <a href='{bgg_url}' target='_blank'>BGG Info</a>", unsafe_allow_html=True)
             else:
