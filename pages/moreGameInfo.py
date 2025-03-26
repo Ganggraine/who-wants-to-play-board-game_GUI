@@ -1,14 +1,33 @@
 import streamlit as st
 import requests
 import xmltodict
-from streamlit.components.v1 import html
+import os
 
 
 def show_banner():
-    banner_l,banner_m,banner_r = st.columns(3)
-    banner_l.empty()
-    banner_m.write('#**TITLE**')
-    banner_r.empty()
+    # --- TOP BAR ---
+    with st.container():
+        # Top Row Layout
+        col1, col2, col3 = st.columns([1, 6, 1])
+
+        with col1:
+            if os.path.exists("media/logo.png"):
+                st.image("media/logo.png")
+            else:
+                st.markdown("<div class='emoji-box'>🎮</div>", unsafe_allow_html=True)
+
+        with col2:
+            st.markdown("<h1 style='text-align: center;'>MEEPLE'S GAMELIST</h1>", unsafe_allow_html=True)
+
+        with col3:
+            st.markdown("""
+                        <div style="text-align:center;">
+                        <button onclick="window.parent.postMessage({type: 'streamlit:setSessionState',
+                        key: 'page', value: 'Home'}, '*')"
+                        style="font-size:100px; background:none; border:none; cursor:pointer;" title="Back to Home">
+                        🏠</button></div>""",
+                        unsafe_allow_html=True
+                        )
 
 def show_bloc_game_info(game_id):
         @st.cache_data
@@ -130,15 +149,15 @@ def show_bloc_game_info(game_id):
             [
                 [
                     ["boardgamecategory","Categories"],
-                    ["boardgamefamily","Family"],
-                    ["boardgamemechanic","Mechanic"],
+                    ["boardgamefamily","Families"],
+                    ["boardgamemechanic","Mechanics"],
                 ],"Categories"
             ],
             [
                 [
-                    ["boardgamepublisher",'Publisher'],
-                    ["boardgamedesigner",'Designer'],
-                    ["boardgameartist",'Artist']
+                    ["boardgamepublisher",'Publishers'],
+                    ["boardgamedesigner",'Designers'],
+                    ["boardgameartist",'Artists']
                 ]
                 ,"They work on it"
             ],
@@ -176,15 +195,10 @@ def show_more_game_info(game_id: int = 224517):
         menu_items=None
     )
     show_banner()
-    st.button('more info',key= 'change game 1',on_click = show_bloc_game_info(441696))
-    st.button('more info',key= 'change game 2',on_click = show_bloc_game_info(224517))
-    show_bloc_game_info(game_id)
-
-
-
-
-
-
+    if st.session_state['current_id']:
+        show_bloc_game_info(st.session_state['current_id'])
+    else:
+        show_bloc_game_info('284818')
 
 
 if __name__ == '__main__':
