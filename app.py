@@ -163,7 +163,7 @@ def show_home():
 
     with col1:
         if os.path.exists("media/logo.png"):
-            st.image("media/logo.png")
+            st.image("media/logo.png",width=150)
         else:
             st.markdown("<div class='emoji-box'>🎮</div>", unsafe_allow_html=True)
 
@@ -171,14 +171,20 @@ def show_home():
         st.markdown("<h1 style='text-align: center;'>MEEPLE'S GAMELIST</h1>", unsafe_allow_html=True)
 
     with col3:
-        st.markdown("""
-                    <div style="text-align:center;">
-                    <button onclick="window.parent.postMessage({type: 'streamlit:setSessionState',
-                    key: 'page', value: 'Home'}, '*')"
-                    style="font-size:100px; background:none; border:none; cursor:pointer;" title="Back to Home">
-                    🏠</button></div>""",
-                    unsafe_allow_html=True
-                    )
+        # st.markdown("""
+        #             <div style="text-align:center;">
+        #             <button onclick="window.parent.postMessage({type: 'streamlit:setSessionState',
+        #             key: 'page', value: 'Home'}, '*')"
+        #             style="font-size:100px; background:none; border:none; cursor:pointer;" title="Back to Home">
+        #             🏠</button></div>""",
+        #             unsafe_allow_html=True
+        #             )
+        if st.button("🏠 Back home", key="Home", use_container_width=True):
+            try:
+                st.switch_page('app.py')
+            except:
+                pass
+
 
 
     # # --- Header Video ---

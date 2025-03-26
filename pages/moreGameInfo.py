@@ -20,14 +20,8 @@ def show_banner():
             st.markdown("<h1 style='text-align: center;'>MEEPLE'S GAMELIST</h1>", unsafe_allow_html=True)
 
         with col3:
-            st.markdown("""
-                        <div style="text-align:center;">
-                        <button onclick="window.parent.postMessage({type: 'streamlit:setSessionState',
-                        key: 'page', value: 'Home'}, '*')"
-                        style="font-size:100px; background:none; border:none; cursor:pointer;" title="Back to Home">
-                        🏠</button></div>""",
-                        unsafe_allow_html=True
-                        )
+            if st.button("🏠 Back home", key="Home", use_container_width=True):
+                st.switch_page('app.py')
 
 def show_bloc_game_info(game_id):
         @st.cache_data
@@ -85,6 +79,9 @@ def show_bloc_game_info(game_id):
                                 get('averageweight','')
                         else:
                             entry[key] = value.get('#text', '')
+                        if key == 'name':
+                            if value.get('@primary', ''):
+                                entry['main_name'] = value.get('#text', '')
                     elif isinstance(value, list):
                         # If the value is a list, take the first element's '#text' field
                         # entry[key] = value[0].get('#text', '') if value else ''
@@ -106,7 +103,8 @@ def show_bloc_game_info(game_id):
 
         col1,col2 = st.columns([1,2])
         col1.image(game['image'],use_container_width = True)
-        col2.header(f"**{game['main_name']}**")
+        if game.get('main_name'):
+            col2.header(f"**{game['main_name']}**")
         bgg_url = f"https://boardgamegeek.com/boardgame/{game.get('@objectid')}"
         col2.markdown(f"*<a href='{bgg_url}' target='_blank'>Find more infos on boardgamegeek.com</a>*", unsafe_allow_html=True)
 

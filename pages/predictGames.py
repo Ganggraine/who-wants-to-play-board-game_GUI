@@ -107,7 +107,7 @@ def show_predict_games():
 
         with col1:
             if os.path.exists("media/logo.png"):
-                st.image("media/logo.png")
+                st.image("media/logo.png",width=150)
             else:
                 st.markdown("<div class='emoji-box'>🎮</div>", unsafe_allow_html=True)
 
@@ -115,14 +115,11 @@ def show_predict_games():
             st.markdown("<h1 style='text-align: center;'>MEEPLE'S GAMELIST</h1>", unsafe_allow_html=True)
 
         with col3:
-            st.markdown("""
-                        <div style="text-align:center;">
-                        <button onclick="window.parent.postMessage({type: 'streamlit:setSessionState',
-                        key: 'page', value: 'Home'}, '*')"
-                        style="font-size:100px; background:none; border:none; cursor:pointer;" title="Back to Home">
-                        🏠</button></div>""",
-                        unsafe_allow_html=True
-                        )
+            if st.button("🏠 Back home", key="Home", type="secondary", use_container_width=True):
+                try:
+                    st.switch_page('app.py')
+                except:
+                    pass
 
     if 'games_list' not in st.session_state:
         st.session_state['games_list'] = []
@@ -215,7 +212,7 @@ def show_predict_games():
 
             if st.session_state['games_list']:
                 for game in st.session_state['games_list']:
-                    col_img, col_details = st.columns([1, 4, 1])
+                    col_img, col_details, col_button = st.columns([1, 4, 1])
                     with col_img:
                         if game.get('image'):
                             st.image(game['thumbnail'], width=100)
@@ -227,13 +224,12 @@ def show_predict_games():
                         st.markdown(f"**Description:** {game.get('description', 'No description available')[:100]}...")
 
                         bgg_url = f"https://boardgamegeek.com/boardgame/{game.get('@objectid')}"
-                        col_more, col_url = st.columns(2)
-                        with col_more :
-                            if st.button('more info',key = game.get('@objectid')):
-                                st.session_state['current_id'] = game.get('@objectid')
-                                st.switch_page('pages/moreGameInfo.py')
-                        with col_url :
-                            st.markdown(f" <a href='{bgg_url}' target='_blank'>BGG Info</a>", unsafe_allow_html=True)
+
+                    with col_button :
+                        if st.button('More infos',key = game.get('@objectid')):
+                            st.session_state['current_id'] = game.get('@objectid')
+                            st.switch_page('pages/moreGameInfo.py')
+                        st.markdown(f" <a href='{bgg_url}' target='_blank'>BGG Info</a>", unsafe_allow_html=True)
             else:
                 st.info("No games to display at the moment.")
 
