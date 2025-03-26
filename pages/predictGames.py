@@ -1,10 +1,7 @@
 import streamlit as st
 import requests
 import pandas as pd
-
-import openai
-
-from pages.home import show_home
+import os
 from pages.moreGameInfo import show_more_game_info
 
 from constant.params import *
@@ -33,9 +30,9 @@ BASE_ENDPOINTS_URL = "https://api-326525614739.europe-west1.run.app/"
 #-------------------------------------------------------------------------
 @st.cache_data
 def load_parquet_data():
-    file_path_category = './raw_data/category_data.parquet'
-    file_path_family = './raw_data/family_data.parquet'
-    file_path_mechanic = './raw_data/mechanic_data.parquet'
+    file_path_category = './categories_data/category_data.parquet'
+    file_path_family = './categories_data/family_data.parquet'
+    file_path_mechanic = './categories_data/mechanic_data.parquet'
 
     df_category = pd.read_parquet(file_path_category)
     df_family = pd.read_parquet(file_path_family)
@@ -105,17 +102,24 @@ def show_predict_games():
     #-------------------------------------------------------------------------
     # --- TOP BAR ---
     with st.container():
-        col_logo, col_title, col_home = st.columns([1, 5, 1])
+        # Top Row Layout
+        col1, col2, col3 = st.columns([1, 6, 1])
 
-        with col_logo:
-            st.image("media/logo.png", width=60)
+        with col1:
+            if os.path.exists("media/logo.png"):
+                st.image("media/logo.png",width=150)
+            else:
+                st.markdown("<div class='emoji-box'>🎮</div>", unsafe_allow_html=True)
 
-        with col_title:
-            st.markdown("<h1 style='text-align: center;'>MEEPLE'S GAME LIST</h1>", unsafe_allow_html=True)
+        with col2:
+            st.markdown("<h1 style='text-align: center;'>MEEPLE'S GAMELIST</h1>", unsafe_allow_html=True)
 
-        with col_home:
-            if st.button("🏠", help="Back to Home"):
-                st.session_state.page = "Home"
+        with col3:
+            if st.button("🏠 Back home", key="Home", type="secondary", use_container_width=True):
+                try:
+                    st.switch_page('app.py')
+                except:
+                    pass
 
     if 'games_list' not in st.session_state:
         st.session_state['games_list'] = []
@@ -125,7 +129,7 @@ def show_predict_games():
 
     with col1: # LEFT PANEL
         choices = [OPTION_BOARD_GAME_LIBRARY, OPTION_OFFER_TO_NEPHEW, OPTION_PLAYLIST_FOR_TONIGHT]
-        option = st.segmented_control("", choices, selection_mode="single")
+        option = st.segmented_control("", choices,default = st.session_state['type_from_home'], selection_mode="single")
 
         if option == OPTION_BOARD_GAME_LIBRARY:
             user_id, game_option = get_user_input()
@@ -194,9 +198,9 @@ def show_predict_games():
                         "minplayers": game_details["minplayers"],
                         "age": AGE[game_details["age"]],
                         "yearpublished": YEAR_PUBLISHED[game_details["yearpublished"]],
-                        "boardgamecategory": [],
-                        "boardgamemechanic": [],
-                        "boardgamefamily": []
+                        "boardgamecategory": game_details["boardgamecategory"],
+                        "boardgamemechanic": game_details["boardgamemechanic"],
+                        "boardgamefamily": game_details["boardgamefamily"],
                     }
 
                     response = make_api_call("predict_filters", params)
@@ -208,7 +212,7 @@ def show_predict_games():
 
             if st.session_state['games_list']:
                 for game in st.session_state['games_list']:
-                    col_img, col_details = st.columns([1, 4])
+                    col_img, col_details, col_button = st.columns([1, 4, 1])
                     with col_img:
                         if game.get('image'):
                             st.image(game['thumbnail'], width=100)
@@ -220,9 +224,14 @@ def show_predict_games():
                         st.markdown(f"**Description:** {game.get('description', 'No description available')[:100]}...")
 
                         bgg_url = f"https://boardgamegeek.com/boardgame/{game.get('@objectid')}"
-                        st.markdown(f"[Game Info](#) | <a href='{bgg_url}' target='_blank'>BGG Info</a>", unsafe_allow_html=True)
+
+                    with col_button :
+                        if st.button('More infos',key = game.get('@objectid')):
+                            st.session_state['current_id'] = game.get('@objectid')
+                            st.switch_page('pages/moreGameInfo.py')
+                        st.markdown(f" <a href='{bgg_url}' target='_blank'>BGG Info</a>", unsafe_allow_html=True)
             else:
                 st.info("No games to display at the moment.")
 
-if __name__ == "__main__":
-    show_predict_games()
+# if __name__ == "__main__":
+show_predict_games()
