@@ -1,6 +1,10 @@
 import os
+import pandas as pd
 import streamlit as st
 
+from pages.home import show_home
+from pages.predictGames import show_predict_games
+from pages.moreGameInfo import show_more_game_info
 
 # Define the base URI of the API
 #   - Potential sources are in `.streamlit/secrets.toml` or in the Secrets section
@@ -17,32 +21,20 @@ BASE_URI = BASE_URI if BASE_URI.endswith('/') else BASE_URI + '/'
 url = BASE_URI + 'predict'
 
 # Just displaying the source for the API. Remove this in your final version.
-st.markdown(f"Working with {url}")
+# st.markdown(f"Working with {url}")
 
-st.markdown("Now, the rest is up to you. Start creating your page.")
+# st.markdown("Now, the rest is up to you. Start creating your page.")
 
+import streamlit as st
 
-# TODO: Add some titles, introduction, ...
+# Sidebar navigation
+st.sidebar.title("Home")
+page = st.sidebar.radio("Go to", ["Home", "Predict games", "More game info"])
 
-
-# TODO: Request user input
-
-
-# TODO: Call the API using the user's input
-#   - url is already defined above
-#   - create a params dict based on the user's input
-#   - finally call your API using the requests package
-
-
-# TODO: retrieve the results
-#   - add a little check if you got an ok response (status code 200) or something else
-#   - retrieve the prediction from the JSON
-
-
-# TODO: display the prediction in some fancy way to the user
-
-
-# TODO: [OPTIONAL] maybe you can add some other pages?
-#   - some statistical data you collected in graphs
-#   - description of your product
-#   - a 'Who are we?'-page
+# Display selected page
+if page == "Home":
+    show_home()
+elif page == "Predict games":
+    show_predict_games()
+elif page == "More game info":
+    show_more_game_info()
