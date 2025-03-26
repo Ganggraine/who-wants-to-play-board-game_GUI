@@ -13,3 +13,5 @@ xmltodict
 
 # Data science
 pandas
+
+fastparquet==2024.11.0

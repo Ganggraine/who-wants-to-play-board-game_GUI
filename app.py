@@ -1,7 +1,6 @@
+import streamlit as st
 import os
 import pandas as pd
-import streamlit as st
-
 from pages.home import show_home
 from pages.predictGames import show_predict_games
 from pages.moreGameInfo import show_more_game_info
@@ -25,16 +24,29 @@ url = BASE_URI + 'predict'
 
 # st.markdown("Now, the rest is up to you. Start creating your page.")
 
-import streamlit as st
+st.set_page_config(
+    page_title="Board Game Geek",
+    page_icon="",
+    layout="wide"
+)
 
 # Sidebar navigation
-st.sidebar.title("Home")
-page = st.sidebar.radio("Go to", ["Home", "Predict games", "More game info"])
+# st.sidebar.title("Home")
+# page = st.sidebar.radio("Go to", ["Home", "Predict games", "More game info"])
 
 # Display selected page
-if page == "Home":
+# if page == "Home":
+#     show_home()
+# elif page == "Predict games":
+#     show_predict_games()
+# elif page == "More game info":
+#     show_more_game_info()
+
+st.session_state.page = "Predict"
+
+if st.session_state.page == "Home":
     show_home()
-elif page == "Predict games":
+elif st.session_state.page == "Predict":
     show_predict_games()
-elif page == "More game info":
+elif st.session_state.page == "More":
     show_more_game_info()
