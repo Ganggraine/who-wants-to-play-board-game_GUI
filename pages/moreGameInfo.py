@@ -22,6 +22,8 @@ def show_banner():
         with col3:
             if st.button("🏠 Back home", key="Home", use_container_width=True):
                 st.switch_page('app.py')
+            if st.button("🔍 Back predict", key="Predict", use_container_width=True):
+                st.switch_page('pages/predictGames.py')
 
 def show_bloc_game_info(game_id):
         @st.cache_data

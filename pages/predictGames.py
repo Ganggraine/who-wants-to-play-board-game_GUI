@@ -62,9 +62,9 @@ def get_game_details():
     mechanic_options = [""] + df_mechanic['boardgamemechanic'].dropna().unique().tolist()
     family_options = [""] + df_family['boardgamefamily'].dropna().unique().tolist()
 
-    boardgamecategory = st.selectbox("Select category:", category_options, index=0, help="Select a category")
-    boardgamemechanic = st.selectbox("Select mechanic:", mechanic_options, index=0, help="Select a mechanic")
-    boardgamefamily = st.selectbox("Select family:", family_options, index=0, help="Select a family")
+    boardgamecategory = st.multiselect("Select category:", category_options,  help="Select a category")
+    boardgamemechanic = st.multiselect("Select mechanic:", mechanic_options,  help="Select a mechanic")
+    boardgamefamily = st.multiselect("Select family:", family_options,  help="Select a family")
 
     return {
         "cluster": cluster,

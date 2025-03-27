@@ -129,6 +129,8 @@ def generate_horizontal_scroller(games, height=250, speed=30):
 
 # Homepage function
 def show_home():
+
+    st.session_state['type_from_home'] = "Game for a friend"
     st.set_page_config(page_title="🧠 Board Game Terminal", layout="wide")
 
     # Custom CSS styling
