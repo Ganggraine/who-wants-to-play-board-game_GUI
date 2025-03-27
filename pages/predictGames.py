@@ -115,7 +115,7 @@ def show_predict_games():
             st.markdown("<h1 style='text-align: center;'>MEEPLE'S GAMELIST</h1>", unsafe_allow_html=True)
 
         with col3:
-            if st.button("🏠 Back home", key="Home", type="secondary", use_container_width=True):
+            if st.button("🏠 Back home", key="Home", use_container_width=True):
                 try:
                     st.switch_page('app.py')
                 except:
