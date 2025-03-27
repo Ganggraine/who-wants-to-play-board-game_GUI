@@ -80,6 +80,7 @@ def get_game_details():
 def make_api_call(endpoint, params):
     url = f"{st.secrets.cloud_api_uri}{endpoint}"
     response = requests.get(url, params=params)
+    print(response.url)
     return response
 
 def handle_api_response(response):
