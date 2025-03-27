@@ -129,6 +129,8 @@ def generate_horizontal_scroller(games, height=250, speed=30):
 
 # Homepage function
 def show_home():
+
+    st.session_state['type_from_home'] = "Game for a friend"
     st.set_page_config(page_title="🧠 Board Game Terminal", layout="wide")
 
     # Custom CSS styling
@@ -186,19 +188,6 @@ def show_home():
                 pass
 
 
-
-    # # --- Header Video ---
-    # video_file = "game_over.mp4"
-    # if os.path.exists(video_file):
-    #     with open(video_file, "rb") as f:
-    #         video_bytes = f.read()
-
-    #     st.video(video_bytes)
-    # else:
-    #     st.warning("🎞️ game_over.mp4 not found.")
-
-
-
     # Banner Section
     st.markdown("---")
     st.markdown("## 📢 Top 10 board games from BGG")
@@ -224,6 +213,9 @@ def show_home():
         <p>This is your <strong>Terminal of Play</strong>.</p>
     </div>
     """, unsafe_allow_html=True)
+    st.markdown("""
+                This data science project aims to develop a recommendation application for board games, leveraging unsupervised machine learning algorithms and the BoardGameGeek dataset. The application will offer users personalized game recommendations based on their preferences, existing game collections, and specific search filters.
+                """)
 
 
     # Option Buttons
@@ -232,25 +224,25 @@ def show_home():
     col_a, col_b, col_c = st.columns(3)
 
     with col_a:
-        if st.button("🔎 Predict which ones will suit your style"):
+        st.markdown("#### 🔎 Predict which ones will suit your style")
+        st.markdown("Utilizing your BoardGameGeek library to recommend games that complement a user's existing board game collection.")
+        if st.button("🔎 Predict based on my BGG"):
             st.session_state['type_from_home'] = "Based on my BGG"
-            # st.session_state.page = "Predict games"
             st.switch_page('pages/predictGames.py')
-
 
     with col_b:
-        if st.button("📈 Find the right games for the right person"):
+        st.markdown("#### 📈 Find the right games for the right person")
+        st.markdown("Filter-based search: Enabling users to find games based on specific criteria, such as player count, playtime, or theme, ideal for gift selection")
+        if st.button("📈 Find the right games for a friend"):
             st.session_state['type_from_home'] = "Game for a friend"
-            # st.session_state.page = "Predict games"
             st.switch_page('pages/predictGames.py')
-
 
     with col_c:
-        if st.button("🤖 Explore a vast galaxy of top board games"):
+        st.markdown("#### 🤖 Explore a vast galaxy of top board games")
+        st.markdown("Combining the previous features, to allow users to plan game nights, by selecting games that fit the players")
+        if st.button("🤖 Fit gamelist for tonight"):
             st.session_state['type_from_home'] = "Games for tonight"
-            # st.session_state.page = "Predict games"
             st.switch_page('pages/predictGames.py')
-
 
     # Footer
     st.markdown("---")

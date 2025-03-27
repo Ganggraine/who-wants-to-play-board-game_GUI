@@ -22,6 +22,8 @@ def show_banner():
         with col3:
             if st.button("🏠 Back home", key="Home", use_container_width=True):
                 st.switch_page('app.py')
+            if st.button("🔍 Back predict", key="Predict", use_container_width=True):
+                st.switch_page('pages/predictGames.py')
 
 def show_bloc_game_info(game_id):
         @st.cache_data
@@ -32,14 +34,7 @@ def show_bloc_game_info(game_id):
             - Requests BGG API
             - Returns data as a list of dictionaries
             '''
-            # list_column = ['@objectid', 'yearpublished', 'minplayers', 'maxplayers', 'playingtime',
-            #     'minplaytime', 'maxplaytime', 'age', 'name', 'description', 'thumbnail',
-            #     'image', 'boardgameaccessory', 'boardgamepublisher', 'cardset',
-            #     'boardgamepodcastepisode', 'boardgamehonor', 'boardgamecategory',
-            #     'videogamebg', 'boardgamedesigner', 'boardgameartist',
-            #     'boardgameversion', 'boardgamefamily', 'boardgamemechanic',
-            #     'boardgamesubdomain', 'boardgameimplementation', 'poll', 'poll-summary',
-            #     'rpgpodcastepisode']
+
             list_column = ['@objectid','yearpublished',
                         'minplayers', 'maxplayers',
                         'playingtime','minplaytime',
@@ -48,7 +43,7 @@ def show_bloc_game_info(game_id):
                         'boardgamepublisher','boardgamedesigner', 'boardgameartist',
                         'boardgamehonor', 'boardgamecategory',
                         'boardgamefamily', 'boardgamemechanic','boardgamesubdomain',
-                            'statistics'
+                        'statistics'
                         ]
             BASE_URL_BGG_GAME = 'https://boardgamegeek.com/xmlapi/boardgame/'
             response = requests.get(BASE_URL_BGG_GAME +str(game_id)+'?stats=1')
