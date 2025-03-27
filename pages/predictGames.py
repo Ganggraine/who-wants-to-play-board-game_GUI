@@ -171,9 +171,9 @@ def show_predict_games():
                             "minplayers": game_details["minplayers"],
                             "age": AGE[game_details["age"]],
                             "yearpublished": YEAR_PUBLISHED[game_details["yearpublished"]],
-                            "boardgamecategory": game_details["boardgamecategory"],
-                            "boardgamemechanic": game_details["boardgamemechanic"],
-                            "boardgamefamily": game_details["boardgamefamily"],
+                            "boardgamecategory": str(game_details["boardgamecategory"]),
+                            "boardgamemechanic": str(game_details["boardgamemechanic"]),
+                            "boardgamefamily": str(game_details["boardgamefamily"]),
                             "userID": user_id,
                             "predict_option": game_option,
                             "ratio_filter": float(ratio_filter/100)
@@ -199,9 +199,9 @@ def show_predict_games():
                         "minplayers": game_details["minplayers"],
                         "age": AGE[game_details["age"]],
                         "yearpublished": YEAR_PUBLISHED[game_details["yearpublished"]],
-                        "boardgamecategory": game_details["boardgamecategory"],
-                        "boardgamemechanic": game_details["boardgamemechanic"],
-                        "boardgamefamily": game_details["boardgamefamily"],
+                        "boardgamecategory": str(game_details["boardgamecategory"]),
+                        "boardgamemechanic": str(game_details["boardgamemechanic"]),
+                        "boardgamefamily": str(game_details["boardgamefamily"]),
                     }
 
                     response = make_api_call("predict_filters", params)
