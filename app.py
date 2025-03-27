@@ -1,26 +1,3 @@
-# import streamlit as st
-# import os
-# import pandas as pd
-# from pages.home import show_home
-# from pages.predictGames import show_predict_games
-# from pages.moreGameInfo import show_more_game_info
-
-# Define the base URI of the API
-#   - Potential sources are in `.streamlit/secrets.toml` or in the Secrets section
-#     on Streamlit Cloud
-#   - The source selected is based on the shell variable passend when launching streamlit
-#     (shortcuts are included in Makefile). By default it takes the cloud API url
-
-
-# st.session_state.page = "Home"
-
-# if st.session_state.page == "Home":
-#     show_home()
-# elif st.session_state.page == "Predict":
-#     show_predict_games()
-# elif st.session_state.page == "More":
-#     show_more_game_info()
-
 import streamlit as st
 import os
 import requests
